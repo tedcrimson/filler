@@ -10,6 +10,17 @@ public class LevelManager : MonoBehaviour
     public Transform spawner;
     public GameObject MainObject;
 
+    private float randomRotation;
+	private float time;
+
+	private int dir;
+	private float speed;
+
+    private void Awake()
+    {
+        RandomGenerator();
+		InvokeRepeating("RandomGenerator", 0, Random.Range(1f, 2f));
+    }
 
     void Start()
     {
@@ -29,6 +40,41 @@ public class LevelManager : MonoBehaviour
 
     void Update()
     {
-        MainObject.transform.Rotate(Vector3.forward, 1);
+		MainObject.transform.Rotate(Vector3.forward, dir * speed);
+
     }
+
+    // IEnumerator RandomGeneratorOne(int dir)
+    // {
+    //     while (time < 140)
+    //     {
+	// 		time++;
+    //         MainObject.transform.Rotate(Vector3.forward, dir);
+    //         yield return new WaitForEndOfFrame();
+    //     }
+    //     time = 0;
+    //     RandomGenerator();
+    // }
+
+
+    public void RandomGenerator()
+    {
+		dir = Random.value > .5f ? 1 : -1;
+		speed = Random.Range(0f, 2f);
+		return;
+	}
+    //     randomRotation = Random.Range(0f, 2f);
+	// 	Debug.Log("Random num - " + randomRotation);
+    //     if (randomRotation < 1)
+    //     {
+    //         StartCoroutine(RandomGeneratorOne(1));
+			
+    //         // StartCoroutine(RandomGenerator());
+    //     }
+    //     else
+    //     {
+    //         StartCoroutine(RandomGeneratorOne(-1));
+    //         // StartCoroutine(RandomGeneratorOne());
+    //     }
+    // }
 }
