@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
-    [Range(22, 100)]
+    [Range(20, 100)]
     public int levelCoefficient;
     public GameObject prefab;
     public Transform spawner;
@@ -17,7 +17,7 @@ public class LevelManager : MonoBehaviour
         var startPos = spawner.position;
         while (randomAngleSum < 340)
         {
-            var randomAngle = Random.Range(22, levelCoefficient);
+            var randomAngle = Random.Range(20, levelCoefficient);
             randomAngleSum += randomAngle;
             Instantiate(prefab, spawner.position, spawner.rotation, MainObject.transform);
 
