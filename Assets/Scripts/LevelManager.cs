@@ -15,7 +15,7 @@ public class LevelManager : MonoBehaviour {
 		for (int i = 0; i < 10; i++)
 		{
 			spawner.RotateAround(Vector3.zero, Vector3.forward, 30);
-			Instantiate(prefab, spawner.position, spawner.rotation);
+			Instantiate(prefab, spawner.position, spawner.rotation, MainObject.transform);
 		}
 		spawner.position = startPos;
 		spawner.rotation = Quaternion.identity;
@@ -24,5 +24,8 @@ public class LevelManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		MainObject.transform.Rotate(Vector3.forward, 1);
+
+		if(Input.GetMouseButtonDown(0))
+			Debug.Log(MainObject.transform.eulerAngles.z);
 	}
 }
