@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 585d39933941be642827aa7c344705f8, type: 3}
+  m_Name: Pizza
+  m_EditorClassIdentifier: 
+  MainObject: {fileID: 1554127119025210, guid: efa6b25d17670fc41a4f35487fe2d368, type: 2}
+  TargetObject: {fileID: 1210947180191996, guid: ae847979e0ddee2428f19c9291841416,
+    type: 2}
+  HitObject: {fileID: 114866950162286826, guid: 84d476dcb91cb824a9a9fe698846ab37,
+    type: 2}
+  BackgroundColor: {r: 0, g: 0, b: 0, a: 0}
+  SpawnerPosY: 1.8
+  HitPosY: 1.58

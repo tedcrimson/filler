@@ -13,26 +13,30 @@ public class HitPoint
 	public float angle;
 	public GameObject obj;
 	public bool hit;
+    public SpriteRenderer rend;
 	public HitPoint(GameObject obj, float angle)
 	{
 		this.obj = obj;
 		this.angle = angle;
 		this.hit = false;
+        rend = obj.GetComponent<SpriteRenderer>();
 	}
 
 	public void Hit()
 	{
-		obj.SetActive(false);
+		rend.enabled = false;
 		hit = true;
 	}
 }
 public class LevelManager : MonoBehaviour
 {
-    [Range(20, 100)]
-    public int levelCoefficient;
-    public GameObject prefab;
+    public PlayerController player;
+    [Range(0f, 1f)]
+    public float levelCoefficient;
     public Transform spawner;
-    public GameObject MainObject;
+    public Transform hitObject;
+    private GameObject MainObject;
+    private GameObject targetPrefab;
 
     public List<HitPoint> pointAngles;
     public int currentIndex;
@@ -46,14 +50,25 @@ public class LevelManager : MonoBehaviour
 
     private State state;
 
+    private float offset;
+    public float maxSpeed;
+
     private void Awake()
     {
+        offset = 0.03f;
+        dir = -1;
+
+        SkinData currentSkin = GameManager.Instance.CurrentSkin;
+        targetPrefab = currentSkin.TargetObject;
+        MainObject = Instantiate(currentSkin.MainObject);
+        player.SetHitObject(currentSkin.HitObject, 4);
+        spawner.transform.position = new Vector2(0, currentSkin.SpawnerPosY);
+        hitObject.position = new Vector2(0, currentSkin.HitPosY);
+        Camera.main.backgroundColor = currentSkin.BackgroundColor;
+
 		state = State.PERFECT;
-		// currentIndex = -1;
-		// CheckAllHit();
-        RandomGenerator();
-        InvokeRepeating("RandomGenerator", 0, Random.Range(1f, 2f));
-		PlayerController.OnClick += HitDetect;
+		ShootController.OnHit += HitDetect;
+
     }
 
 	/// <summary>
@@ -61,41 +76,41 @@ public class LevelManager : MonoBehaviour
 	/// </summary>
 	void OnDestroy()
 	{
-		PlayerController.OnClick -= HitDetect;
-		
+		ShootController.OnHit -= HitDetect;
 	}
 
     void Start()
     {
+        speed = 0;
+        StartCoroutine(ChangeSpeed());
         pointAngles = new List<HitPoint>();
-        int randomAngleSum = 0;
         var startPos = spawner.position;
-        while (randomAngleSum < 340)
+        for (int i = 0; i < 18; i++)
         {
-            var randomAngle = Random.Range(20, levelCoefficient);
-            randomAngleSum += randomAngle;
-            var g = Instantiate(prefab, spawner.position, spawner.rotation, MainObject.transform);
+            if(Random.value > levelCoefficient){
+                var g = Instantiate(targetPrefab, spawner.position, spawner.rotation, MainObject.transform);
 
-            pointAngles.Add(new HitPoint(g, 360 - spawner.eulerAngles.z));
-            spawner.RotateAround(Vector3.zero, Vector3.forward, randomAngle);
-			
-            // Debug.Log(randomAngle);
+                pointAngles.Add(new HitPoint(g, 360 - spawner.eulerAngles.z));
+            }
+            spawner.RotateAround(Vector3.zero, Vector3.forward, 20);
         }
+			
         spawner.position = startPos;
         spawner.rotation = Quaternion.identity;
     }
 
     void Update()
     {
-        MainObject.transform.Rotate(Vector3.forward, -1f*speed);
+        MainObject.transform.Rotate(Vector3.forward*dir, speed);
+
         // MainObject.transform.Rotate(Vector3.forward, dir * speed);
         float zone = Mathf.Abs(MainObject.transform.eulerAngles.z - pointAngles[currentIndex].angle);
 		// Debug.Log(pointAngles[currentIndex].angle + " "  + MainObject.transform.eulerAngles.z + "  " + zone);
-        if (zone < 4)
+        if (zone <= 4)
         {
             state = State.PERFECT;
         }
-        else if (zone < 11)
+        else if (zone <= 11)
         {
             state = State.GOOD;
         }
@@ -103,7 +118,7 @@ public class LevelManager : MonoBehaviour
         {
             if (state != State.BAD && CheckAllHit())
             {
-				UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+                Win();
             }
 			state = State.BAD;
         }
@@ -111,13 +126,38 @@ public class LevelManager : MonoBehaviour
 
     }
 
+    
+    IEnumerator ChangeSpeed()
+    {
+        while(true){
+            Debug.Log("Reset");
+            while(speed > offset)
+            {
+                speed = Mathf.Lerp(speed, 0, Time.deltaTime);
+                yield return 0;
+            }
+            Debug.Log("SlowDowned");
+            dir = Random.value > .5f ? 1 : -1;
+            while(speed < maxSpeed - offset)
+            {
+                speed = Mathf.Lerp(speed, maxSpeed, Time.deltaTime);
+                yield return 0;
+            }
+            Debug.Log("SpeedUped");
+            speed = maxSpeed;
+            yield return new WaitForSeconds(Random.Range(1f, 2f));
+        }
+    }
+
 	public bool CheckAllHit()
 	{
 		bool allhit = pointAngles.TrueForAll(x=>x.hit);
 		do{
-			currentIndex++;
+			currentIndex = currentIndex - dir;
 			if (currentIndex == pointAngles.Count)
 				currentIndex = 0;
+            if(currentIndex < 0)
+                currentIndex = pointAngles.Count - 1;
 		}
 		while(!allhit && pointAngles[currentIndex].hit);
 		// Debug.LogError(currentIndex);
@@ -125,13 +165,20 @@ public class LevelManager : MonoBehaviour
 	}
 
 
-    void HitDetect()
+    void HitDetect(ShootController s)
     {
+        s.Animate(state);
         if(state != State.BAD)
 		{
-			Debug.LogError(currentIndex);
+            // Debug.Log("Hit" + state);
+			// Debug.LogError(currentIndex);
+            s.FixPosition(pointAngles[currentIndex].obj);
 			pointAngles[currentIndex].Hit();
-			CheckAllHit();
+			// CheckAllHit();
+		}
+        else{
+            s.GravityOn();
+            GameOver();
 		}
     }
     public void RandomGenerator()
@@ -139,5 +186,15 @@ public class LevelManager : MonoBehaviour
         dir = Random.value > .5f ? 1 : -1;
         speed = Random.Range(1f, 1.2f);
         return;
+    }
+
+    public void GameOver()
+    {
+        // UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+    }
+
+    public void Win()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
 }

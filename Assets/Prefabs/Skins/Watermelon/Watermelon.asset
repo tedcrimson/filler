@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 585d39933941be642827aa7c344705f8, type: 3}
+  m_Name: Watermelon
+  m_EditorClassIdentifier: 
+  MainObject: {fileID: 1827679533405448, guid: 042d68e9f13bc8e4da2a97f3d9ebea6d, type: 2}
+  TargetObject: {fileID: 1210947180191996, guid: 06f089243dd971c4fb55f827756feb76,
+    type: 2}
+  HitObject: {fileID: 114951888955246170, guid: ad410314dbae92140a8e03d12eb5c8df,
+    type: 2}
+  BackgroundColor: {r: 0, g: 0, b: 0, a: 0}
+  SpawnerPosY: 1.8
+  HitPosY: 1.58

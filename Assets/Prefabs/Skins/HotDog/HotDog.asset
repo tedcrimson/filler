@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 585d39933941be642827aa7c344705f8, type: 3}
+  m_Name: HotDog
+  m_EditorClassIdentifier: 
+  MainObject: {fileID: 1827679533405448, guid: 19ebbc39cc7840d458b38d2db67fc64e, type: 2}
+  TargetObject: {fileID: 1210947180191996, guid: b9d3ad0f783936b4eb2802db09ee8869,
+    type: 2}
+  HitObject: {fileID: 114951888955246170, guid: aef07661bfd96dd419f7c4d8f26076db,
+    type: 2}
+  BackgroundColor: {r: 0.22745098, g: 0.22352941, b: 0.21568628, a: 1}
+  SpawnerPosY: 2.214
+  HitPosY: 1.85
