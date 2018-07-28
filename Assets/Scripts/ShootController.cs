@@ -9,6 +9,9 @@ public class ShootController : MonoBehaviour {
 
 
 	public SpriteRenderer defaultRenderer;
+	public ParticleSystem GoodParticle;
+	public ParticleSystem PerfectParticle;
+
 	private Animator animator;
 	private Rigidbody2D rigid;
 
@@ -53,14 +56,20 @@ public class ShootController : MonoBehaviour {
 		defaultRenderer.enabled = false;
 	}
 
-	public void GravityOn()
-	{
-		rigid.velocity = Vector2.zero;
-		rigid.gravityScale = 1;
-	}
-
 	public void DestroyObject()
 	{
 		// Destroy(this.gameObject);
+	}
+
+	public void PlayPerfect()
+	{
+		if(PerfectParticle != null)
+			PerfectParticle.Play();
+	}
+
+	public void PlayGood()
+	{
+		if(GoodParticle != null)
+			GoodParticle.Play();
 	}
 }

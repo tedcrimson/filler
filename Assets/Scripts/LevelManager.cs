@@ -10,23 +10,23 @@ public enum State
 [System.Serializable]
 public class HitPoint
 {
-    public float angle;
-    public GameObject obj;
-    public bool hit;
-    public SpriteRenderer rend;
-    public HitPoint(GameObject obj, float angle)
-    {
-        this.obj = obj;
-        this.angle = angle;
-        this.hit = false;
-        rend = obj.GetComponent<SpriteRenderer>();
-    }
+	public float angle;
+	public GameObject obj;
+	public bool hit;
+    public SpriteMask mask;
+	public HitPoint(GameObject obj, float angle)
+	{
+		this.obj = obj;
+		this.angle = angle;
+		this.hit = false;
+        mask = obj.GetComponent<SpriteMask>();
+	}
 
-    public void Hit()
-    {
-        rend.enabled = false;
-        hit = true;
-    }
+	public void Hit()
+	{
+		mask.enabled = false;
+		hit = true;
+	}
 }
 public class LevelManager : MonoBehaviour
 {
@@ -57,7 +57,7 @@ public class LevelManager : MonoBehaviour
     {
         offset = 0.03f;
         dir = -1;
-        lvl = GameManager.Instance.Data.GetLevelData(8);
+        lvl = GameManager.Instance.Data.GetLevelData(Random.Range(0, 15));
         SkinData currentSkin = GameManager.Instance.CurrentSkin;
         targetPrefab = currentSkin.TargetObject;
         MainObject = Instantiate(currentSkin.MainObject);
@@ -192,7 +192,7 @@ public class LevelManager : MonoBehaviour
         }
         else
         {
-            s.GravityOn();
+            // s.GravityOn();
             GameOver();
         }
     }

@@ -16,7 +16,7 @@ MonoBehaviour:
     lvlValue: 5
     levelData:
     - minSpeed: 0
-      maxSpeed: 0.8
+      maxSpeed: 1
       waitTime: 0
       timeScale: 1
       canSlowDown: 0

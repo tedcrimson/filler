@@ -224,8 +224,6 @@ MonoBehaviour:
   Data: {fileID: 11400000, guid: 3f54c5365fc28c74195919c196fc5b8c, type: 2}
   skins:
   - {fileID: 11400000, guid: 4759a61e70e48104f9c5ec95efc95030, type: 2}
-  - {fileID: 11400000, guid: 100a4d6d61372b84ba38eb33df3b1286, type: 2}
-  - {fileID: 11400000, guid: 2e55538c88ba7e2408420830ed344d37, type: 2}
 --- !u!4 &166708701
 Transform:
   m_ObjectHideFlags: 0

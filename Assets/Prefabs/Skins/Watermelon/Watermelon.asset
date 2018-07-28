@@ -16,6 +16,6 @@ MonoBehaviour:
     type: 2}
   HitObject: {fileID: 114951888955246170, guid: ad410314dbae92140a8e03d12eb5c8df,
     type: 2}
-  BackgroundColor: {r: 0, g: 0, b: 0, a: 0}
+  BackgroundColor: {r: 1, g: 1, b: 1, a: 1}
   SpawnerPosY: 1.8
   HitPosY: 1.58
