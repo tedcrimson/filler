@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-
+    public ScriptableLevels Data;
     public List<SkinData> skins;
 
     public SkinData CurrentSkin

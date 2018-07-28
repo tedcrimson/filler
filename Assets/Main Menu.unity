@@ -204,7 +204,7 @@ GameObject:
   - component: {fileID: 166708701}
   - component: {fileID: 166708700}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -221,6 +221,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38684bf6e34458347a38f5999baa762b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Data: {fileID: 11400000, guid: 3f54c5365fc28c74195919c196fc5b8c, type: 2}
   skins:
   - {fileID: 11400000, guid: 4759a61e70e48104f9c5ec95efc95030, type: 2}
   - {fileID: 11400000, guid: 100a4d6d61372b84ba38eb33df3b1286, type: 2}

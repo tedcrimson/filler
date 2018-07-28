@@ -10,23 +10,23 @@ public enum State
 [System.Serializable]
 public class HitPoint
 {
-	public float angle;
-	public GameObject obj;
-	public bool hit;
+    public float angle;
+    public GameObject obj;
+    public bool hit;
     public SpriteRenderer rend;
-	public HitPoint(GameObject obj, float angle)
-	{
-		this.obj = obj;
-		this.angle = angle;
-		this.hit = false;
+    public HitPoint(GameObject obj, float angle)
+    {
+        this.obj = obj;
+        this.angle = angle;
+        this.hit = false;
         rend = obj.GetComponent<SpriteRenderer>();
-	}
+    }
 
-	public void Hit()
-	{
-		rend.enabled = false;
-		hit = true;
-	}
+    public void Hit()
+    {
+        rend.enabled = false;
+        hit = true;
+    }
 }
 public class LevelManager : MonoBehaviour
 {
@@ -51,13 +51,13 @@ public class LevelManager : MonoBehaviour
     private State state;
 
     private float offset;
-    public float maxSpeed;
+    private LevelData lvl;
 
     private void Awake()
     {
         offset = 0.03f;
         dir = -1;
-
+        lvl = GameManager.Instance.Data.GetLevelData(8);
         SkinData currentSkin = GameManager.Instance.CurrentSkin;
         targetPrefab = currentSkin.TargetObject;
         MainObject = Instantiate(currentSkin.MainObject);
@@ -66,46 +66,55 @@ public class LevelManager : MonoBehaviour
         hitObject.position = new Vector2(0, currentSkin.HitPosY);
         Camera.main.backgroundColor = currentSkin.BackgroundColor;
 
-		state = State.PERFECT;
-		ShootController.OnHit += HitDetect;
+        state = State.PERFECT;
+        ShootController.OnHit += HitDetect;
+
+
 
     }
 
-	/// <summary>
-	/// This function is called when the MonoBehaviour will be destroyed.
-	/// </summary>
-	void OnDestroy()
-	{
-		ShootController.OnHit -= HitDetect;
-	}
+    /// <summary>
+    /// This function is called when the MonoBehaviour will be destroyed.
+    /// </summary>
+    void OnDestroy()
+    {
+        ShootController.OnHit -= HitDetect;
+    }
 
     void Start()
     {
-        speed = 0;
-        StartCoroutine(ChangeSpeed());
+        dir = Random.value > .5f ? 1 : -1;
+        if (lvl.canSlowDown)
+        {
+            StartCoroutine(ChangeSpeed());
+            speed = 0;
+        }
+        else
+            speed = lvl.maxSpeed;
         pointAngles = new List<HitPoint>();
         var startPos = spawner.position;
         for (int i = 0; i < 18; i++)
         {
-            if(Random.value > levelCoefficient){
+            if (Random.value > levelCoefficient)
+            {
                 var g = Instantiate(targetPrefab, spawner.position, spawner.rotation, MainObject.transform);
 
                 pointAngles.Add(new HitPoint(g, 360 - spawner.eulerAngles.z));
             }
             spawner.RotateAround(Vector3.zero, Vector3.forward, 20);
         }
-			
+
         spawner.position = startPos;
         spawner.rotation = Quaternion.identity;
     }
 
     void Update()
     {
-        MainObject.transform.Rotate(Vector3.forward*dir, speed);
+        MainObject.transform.Rotate(Vector3.forward * dir, speed);
 
         // MainObject.transform.Rotate(Vector3.forward, dir * speed);
         float zone = Mathf.Abs(MainObject.transform.eulerAngles.z - pointAngles[currentIndex].angle);
-		// Debug.Log(pointAngles[currentIndex].angle + " "  + MainObject.transform.eulerAngles.z + "  " + zone);
+        // Debug.Log(pointAngles[currentIndex].angle + " "  + MainObject.transform.eulerAngles.z + "  " + zone);
         if (zone <= 4)
         {
             state = State.PERFECT;
@@ -120,66 +129,72 @@ public class LevelManager : MonoBehaviour
             {
                 Win();
             }
-			state = State.BAD;
+            state = State.BAD;
         }
         // Debug.Log(state);
 
     }
 
-    
+
     IEnumerator ChangeSpeed()
     {
-        while(true){
+        while (true)
+        {
             Debug.Log("Reset");
-            while(speed > offset)
+            while (speed > offset + lvl.minSpeed)
             {
-                speed = Mathf.Lerp(speed, 0, Time.deltaTime);
+                speed = Mathf.Lerp(speed, lvl.minSpeed, Time.deltaTime * lvl.timeScale);
                 yield return 0;
             }
-            Debug.Log("SlowDowned");
-            dir = Random.value > .5f ? 1 : -1;
-            while(speed < maxSpeed - offset)
+            if (lvl.canChangeDirection)
             {
-                speed = Mathf.Lerp(speed, maxSpeed, Time.deltaTime);
+                Debug.Log("SlowDowned");
+                dir = Random.value > .5f ? 1 : -1;
+            }
+            while (speed < lvl.maxSpeed - offset)
+            {
+                speed = Mathf.Lerp(speed, lvl.maxSpeed, Time.deltaTime * lvl.timeScale);
                 yield return 0;
             }
             Debug.Log("SpeedUped");
-            speed = maxSpeed;
-            yield return new WaitForSeconds(Random.Range(1f, 2f));
+            speed = lvl.maxSpeed;
+            yield return new WaitForSeconds(lvl.waitTime);
         }
     }
 
-	public bool CheckAllHit()
-	{
-		bool allhit = pointAngles.TrueForAll(x=>x.hit);
-		do{
-			currentIndex = currentIndex - dir;
-			if (currentIndex == pointAngles.Count)
-				currentIndex = 0;
-            if(currentIndex < 0)
+    public bool CheckAllHit()
+    {
+        bool allhit = pointAngles.TrueForAll(x => x.hit);
+        do
+        {
+            currentIndex = currentIndex - dir;
+            if (currentIndex == pointAngles.Count)
+                currentIndex = 0;
+            if (currentIndex < 0)
                 currentIndex = pointAngles.Count - 1;
-		}
-		while(!allhit && pointAngles[currentIndex].hit);
-		// Debug.LogError(currentIndex);
-		return allhit;
-	}
+        }
+        while (!allhit && pointAngles[currentIndex].hit);
+        // Debug.LogError(currentIndex);
+        return allhit;
+    }
 
 
     void HitDetect(ShootController s)
     {
         s.Animate(state);
-        if(state != State.BAD)
-		{
+        if (state != State.BAD)
+        {
             // Debug.Log("Hit" + state);
-			// Debug.LogError(currentIndex);
+            // Debug.LogError(currentIndex);
             s.FixPosition(pointAngles[currentIndex].obj);
-			pointAngles[currentIndex].Hit();
-			// CheckAllHit();
-		}
-        else{
+            pointAngles[currentIndex].Hit();
+            // CheckAllHit();
+        }
+        else
+        {
             s.GravityOn();
             GameOver();
-		}
+        }
     }
     public void RandomGenerator()
     {
