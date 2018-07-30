@@ -30,6 +30,7 @@ public class PlayerController : MonoBehaviour {
 	void Update () {
 		if(Input.GetMouseButtonDown(0) && bulletCount > 0)
 		{
+		Debug.Log(Input.GetMouseButtonDown(0));
 			current.Throw();
 		}
 	}

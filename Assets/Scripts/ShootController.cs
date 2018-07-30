@@ -8,7 +8,7 @@ public class ShootController : MonoBehaviour {
 	public static event Hit OnHit;
 
 
-	public SpriteRenderer defaultRenderer;
+	public GameObject defaultRenderer;
 	public ParticleSystem GoodParticle;
 	public ParticleSystem PerfectParticle;
 
@@ -43,6 +43,7 @@ public class ShootController : MonoBehaviour {
 
 	public void Throw()
 	{
+		Debug.Log("thww");
 		rigid.velocity = Vector2.up * 15;
 	}
 	
@@ -53,7 +54,7 @@ public class ShootController : MonoBehaviour {
 		this.transform.localEulerAngles = Vector2.zero;
 		rigid.velocity = Vector2.zero;
 		rigid.simulated = false;
-		defaultRenderer.enabled = false;
+		defaultRenderer.SetActive(false);// = false;
 	}
 
 	public void GravityOff()
