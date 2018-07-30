@@ -13,11 +13,86 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficulties:
   - name: Easy
-    lvlValue: 5
+    lvlValue: 0
     levelData:
     - minSpeed: 0
-      maxSpeed: 1
+      maxSpeed: 0.97
       waitTime: 0
       timeScale: 1
       canSlowDown: 0
       canChangeDirection: 0
+    - minSpeed: 0.8
+      maxSpeed: 1
+      waitTime: 0
+      timeScale: 1
+      canSlowDown: 1
+      canChangeDirection: 0
+    - minSpeed: 0
+      maxSpeed: 1.4
+      waitTime: 0
+      timeScale: 1.1
+      canSlowDown: 1
+      canChangeDirection: 0
+    - minSpeed: 0.5
+      maxSpeed: 1.2
+      waitTime: 1
+      timeScale: 1
+      canSlowDown: 1
+      canChangeDirection: 0
+    - minSpeed: 0
+      maxSpeed: 1.4
+      waitTime: 0
+      timeScale: 1.2
+      canSlowDown: 1
+      canChangeDirection: 1
+  - name: Medium
+    lvlValue: 5
+    levelData:
+    - minSpeed: 0.3
+      maxSpeed: 2
+      waitTime: 0.01
+      timeScale: 1.4
+      canSlowDown: 1
+      canChangeDirection: 1
+    - minSpeed: 0.3
+      maxSpeed: 2
+      waitTime: 0.01
+      timeScale: 1.4
+      canSlowDown: 1
+      canChangeDirection: 1
+    - minSpeed: 0.3
+      maxSpeed: 2
+      waitTime: 0.01
+      timeScale: 1.4
+      canSlowDown: 1
+      canChangeDirection: 1
+    - minSpeed: 0.3
+      maxSpeed: 2
+      waitTime: 0.01
+      timeScale: 1.4
+      canSlowDown: 1
+      canChangeDirection: 1
+    - minSpeed: 0.3
+      maxSpeed: 2
+      waitTime: 0.01
+      timeScale: 1.4
+      canSlowDown: 1
+      canChangeDirection: 1
+  - name: Hard
+    lvlValue: 10
+    levelData:
+    - minSpeed: 0.3
+      maxSpeed: 2
+      waitTime: 0.01
+      timeScale: 1.4
+      canSlowDown: 1
+      canChangeDirection: 1
+  - name: Ultra
+    lvlValue: 15
+    levelData:
+    - minSpeed: 0.3
+      maxSpeed: 2
+      waitTime: 0.01
+      timeScale: 1.4
+      canSlowDown: 1
+      canChangeDirection: 1
