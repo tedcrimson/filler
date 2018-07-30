@@ -192,7 +192,7 @@ public class LevelManager : MonoBehaviour
         }
         else
         {
-            // s.GravityOn();
+            s.GravityOff();
             GameOver();
         }
     }

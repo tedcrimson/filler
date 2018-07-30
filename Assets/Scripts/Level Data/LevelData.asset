@@ -21,18 +21,3 @@ MonoBehaviour:
       timeScale: 1
       canSlowDown: 0
       canChangeDirection: 0
-    - minSpeed: 0.8
-      maxSpeed: 1
-      waitTime: 0
-      timeScale: 1
-      canSlowDown: 1
-      canChangeDirection: 0
-  - name: Medium
-    lvlValue: 10
-    levelData:
-    - minSpeed: 0.3
-      maxSpeed: 2
-      waitTime: 0.01
-      timeScale: 1.4
-      canSlowDown: 1
-      canChangeDirection: 1
