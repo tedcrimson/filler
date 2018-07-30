@@ -10,27 +10,28 @@ public enum State
 [System.Serializable]
 public class HitPoint
 {
-    public float angle;
-    public GameObject obj;
-    public bool hit;
-    public SpriteRenderer rend;
-    public HitPoint(GameObject obj, float angle)
-    {
-        this.obj = obj;
-        this.angle = angle;
-        this.hit = false;
-        rend = obj.GetComponent<SpriteRenderer>();
-    }
+	public float angle;
+	public GameObject obj;
+	public bool hit;
+    public SpriteMask mask;
+	public HitPoint(GameObject obj, float angle)
+	{
+		this.obj = obj;
+		this.angle = angle;
+		this.hit = false;
+        mask = obj.GetComponent<SpriteMask>();
+	}
 
-    public void Hit()
-    {
-        rend.enabled = false;
-        hit = true;
-    }
+	public void Hit()
+	{
+		mask.enabled = false;
+		hit = true;
+	}
 }
 public class LevelManager : MonoBehaviour
 {
     public PlayerController player;
+    public SpriteRenderer backGroundImage;
     [Range(0f, 1f)]
     public float levelCoefficient;
     public Transform spawner;
@@ -57,7 +58,7 @@ public class LevelManager : MonoBehaviour
     {
         offset = 0.03f;
         dir = -1;
-        lvl = GameManager.Instance.Data.GetLevelData(8);
+        lvl = GameManager.Instance.Data.GetLevelData(Random.Range(0, 15));
         SkinData currentSkin = GameManager.Instance.CurrentSkin;
         targetPrefab = currentSkin.TargetObject;
         MainObject = Instantiate(currentSkin.MainObject);
@@ -65,6 +66,8 @@ public class LevelManager : MonoBehaviour
         spawner.transform.position = new Vector2(0, currentSkin.SpawnerPosY);
         hitObject.position = new Vector2(0, currentSkin.HitPosY);
         Camera.main.backgroundColor = currentSkin.BackgroundColor;
+        if(currentSkin.BackgroundTexture != null)
+            backGroundImage.sprite = currentSkin.BackgroundTexture;
 
         state = State.PERFECT;
         ShootController.OnHit += HitDetect;
@@ -192,7 +195,7 @@ public class LevelManager : MonoBehaviour
         }
         else
         {
-            s.GravityOn();
+            s.GravityOff();
             GameOver();
         }
     }
