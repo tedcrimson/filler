@@ -31,6 +31,7 @@ public class HitPoint
 public class LevelManager : MonoBehaviour
 {
     public PlayerController player;
+    public SpriteRenderer backGroundImage;
     [Range(0f, 1f)]
     public float levelCoefficient;
     public Transform spawner;
@@ -65,6 +66,8 @@ public class LevelManager : MonoBehaviour
         spawner.transform.position = new Vector2(0, currentSkin.SpawnerPosY);
         hitObject.position = new Vector2(0, currentSkin.HitPosY);
         Camera.main.backgroundColor = currentSkin.BackgroundColor;
+        if(currentSkin.BackgroundTexture != null)
+            backGroundImage.sprite = currentSkin.BackgroundTexture;
 
         state = State.PERFECT;
         ShootController.OnHit += HitDetect;

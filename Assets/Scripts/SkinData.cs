@@ -8,6 +8,7 @@ public class SkinData : ScriptableObject {
 	public GameObject TargetObject;
 	public ShootController HitObject;
 	public Color BackgroundColor;
+	public Sprite BackgroundTexture;
 	public float SpawnerPosY;
 	public float HitPosY;
 
