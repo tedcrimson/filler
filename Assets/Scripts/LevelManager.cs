@@ -31,6 +31,9 @@ public class HitPoint
 public class LevelManager : MonoBehaviour
 {
     public PlayerController player;
+
+    public AudioController Audio;
+    public UiController UI;
     public SpriteRenderer backGroundImage;
     [Range(0f, 1f)]
     public float levelCoefficient;
@@ -198,6 +201,9 @@ public class LevelManager : MonoBehaviour
             s.GravityOff();
             GameOver();
         }
+
+        Audio.PlayHitSound(state);
+        UI.UpdateHitInfo(state);
     }
     public void RandomGenerator()
     {
@@ -209,10 +215,12 @@ public class LevelManager : MonoBehaviour
     public void GameOver()
     {
         // UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+        Audio.AS.PlayOneShot(Audio.LoseSound);
     }
 
     public void Win()
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+        Audio.AS.PlayOneShot(Audio.WinSound);
     }
 }
