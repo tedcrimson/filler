@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class UiController : MonoBehaviour {
 
 	public Text HitInfo;
+	public Text ScoreText;
 
 	
 	// Update is called once per frame
@@ -14,5 +15,10 @@ public class UiController : MonoBehaviour {
 
 		HitInfo.text = state.ToString();
 		
+	}
+
+	public void UpdateScore(int score)
+	{
+		ScoreText.text = score+"";
 	}
 }

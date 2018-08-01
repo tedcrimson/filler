@@ -57,6 +57,10 @@ public class LevelManager : MonoBehaviour
     private float offset;
     private LevelData lvl;
 
+    int score;
+
+    public int scoreMultiplier=1;
+
     private void Awake()
     {
         offset = 0.03f;
@@ -89,6 +93,7 @@ public class LevelManager : MonoBehaviour
 
     void Start()
     {
+       // Debug.Log(PlayerPrefs.GetInt("Highscore"));
         dir = Random.value > .5f ? 1 : -1;
         if (lvl.canSlowDown)
         {
@@ -201,9 +206,11 @@ public class LevelManager : MonoBehaviour
             s.GravityOff();
             GameOver();
         }
-
+        score += ((int)state+1)*scoreMultiplier;
         Audio.PlayHitSound(state);
         UI.UpdateHitInfo(state);
+        UI.UpdateScore(score);
+        UpdateHighscore(score);
     }
     public void RandomGenerator()
     {
@@ -222,5 +229,11 @@ public class LevelManager : MonoBehaviour
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene(0);
         Audio.AS.PlayOneShot(Audio.WinSound);
+    }
+
+    public void UpdateHighscore(int score)
+    {
+        if(PlayerPrefs.GetInt("Highscore")<score)
+            PlayerPrefs.SetInt("Highscore",score);
     }
 }
