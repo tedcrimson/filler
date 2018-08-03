@@ -15,7 +15,7 @@ public class AudioManager : MonoBehaviour
     // Use this for initialization
     void Awake()
     {
-        ShootController.OnHit += HitSound;
+        LevelManager.OnStateCheck += HitSound;
         // PlayerController.OnUpdateScore += WinOrLoseSound;
         // PlayerController.OnGameOver += GameOverSound;
         MainUiController.OnAudioChange += ToggleAudio;
@@ -34,14 +34,14 @@ public class AudioManager : MonoBehaviour
     /// </summary>
     void OnDestroy()
     {
-        ShootController.OnHit -= HitSound;
+        LevelManager.OnStateCheck -= HitSound;
         // PlayerController.OnUpdateScore -= WinOrLoseSound;
         // PlayerController.OnGameOver -= GameOverSound;
         MainUiController.OnAudioChange -= ToggleAudio;
 
     }
 
-    public void HitSound(ShootController i)
+    public void HitSound(int i)
     {
         soundEffectSource.PlayOneShot(LevelManager.Instance.GetLevelAudio());
     }

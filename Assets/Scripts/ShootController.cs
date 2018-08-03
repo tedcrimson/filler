@@ -22,6 +22,16 @@ public class ShootController : MonoBehaviour {
 	{
 		animator = GetComponent<Animator>();
 		rigid = GetComponent<Rigidbody2D>();
+		LevelManager.OnStateCheck += Animate;
+	}
+
+	/// <summary>
+	/// This function is called when the MonoBehaviour will be destroyed.
+	/// </summary>
+	void OnDestroy()
+	{
+		LevelManager.OnStateCheck -= Animate;
+		
 	}
 
 
@@ -35,10 +45,10 @@ public class ShootController : MonoBehaviour {
 			OnHit(this);
 	}
 
-	public void Animate(State state)
+	public void Animate(int state)
 	{
 		// if(state != State.BAD)
-		animator.SetTrigger(state.ToString());
+		animator.SetTrigger(((State)state).ToString());
 	}
 
 	public void Throw()

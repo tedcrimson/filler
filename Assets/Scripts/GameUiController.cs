@@ -14,6 +14,7 @@ public class GameUiController : MonoBehaviour
     public Transform ComboParent;
     // public GameObject GameWinPanel;
     public GameObject GameOverPanel;
+    public CanvasGroup FadePanel;
     public Text GameOverText;
     public Text ScoreText;
 
@@ -37,7 +38,7 @@ public class GameUiController : MonoBehaviour
 
 
     // Use this for initialization
-    void Awake()
+    void Start()
     {
 
         LevelManager.OnUpdateScore += UpdateScore;
@@ -45,7 +46,7 @@ public class GameUiController : MonoBehaviour
         // PlayerController.OnClick += ClickRespond;
         LevelManager.OnGameOver += GameOver;
         LevelManager.OnChangeLevel += ChangeLevel;
-        // ShootController.OnHit += HitDetect;
+        LevelManager.OnStateCheck += HitRespond;
 
         // PlayerController.OnAddScore += AddScore;
         LevelManager.OnCombo += AddCombo;
@@ -54,8 +55,9 @@ public class GameUiController : MonoBehaviour
 
         LoseRestartButton.onClick.AddListener(() =>
         {
-            UnityEngine.SceneManagement.SceneManager.LoadScene("Game");
+            UnityEngine.SceneManagement.SceneManager.LoadScene(1);
         });
+        StartCoroutine(FadeIn());
 
         // RateButton.onClick.AddListener(()=>Application.OpenURL("https://play.google.com/store/apps/details?id=com.nefster.meatbusters"));
 
@@ -71,19 +73,36 @@ public class GameUiController : MonoBehaviour
     }
 
 
-
-    /// <summary>
-    /// Start is called on the frame when a script is enabled just before
-    /// any of the Update methods is called the first time.
-    /// </summary>
-    void Start()
+    IEnumerator Reload()//fade out
     {
+        yield return StartCoroutine(FadeOut());
+        UnityEngine.SceneManagement.SceneManager.LoadScene(1);
+    }
+
+    IEnumerator FadeOut()
+    {
+        while(FadePanel.alpha < 0.9)
+        {
+            FadePanel.alpha += Time.deltaTime;
+            yield return null;
+        }
+        FadePanel.alpha = 1f;
+    }
+    IEnumerator FadeIn()
+    {
+        FadePanel.alpha = 1f;
+        while(FadePanel.alpha > 0.1f)
+        {
+            FadePanel.alpha -= Time.deltaTime ;
+            yield return null;
+        }
+        FadePanel.alpha = 0f;
     }
 
 
     public void LoadMenu()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
 
 
@@ -94,6 +113,8 @@ public class GameUiController : MonoBehaviour
     {
         LevelManager.OnChangeLevel -= ChangeLevel;
         LevelManager.OnUpdateScore -= UpdateScore;
+        LevelManager.OnStateCheck -= HitRespond;
+
         // PlayerController.OnUpdateProgress -= UpdateProgress;
         // PlayerController.OnAddScore -= AddScore;
         LevelManager.OnCombo -= AddCombo;
@@ -104,6 +125,7 @@ public class GameUiController : MonoBehaviour
 
     private void ChangeLevel(int level)
     {
+        StartCoroutine(Reload());
         // int curLev = GameManager.Instance.CurrentLevelIndex + 1;
     }
 
@@ -123,8 +145,10 @@ public class GameUiController : MonoBehaviour
 
     private void GameOver(int score)
     {
+        FadePanel.interactable=false;
+        FadePanel.blocksRaycasts=false;
         GameOverPanel.SetActive(true);
-        LevelManager.OnUpdateScore -= UpdateScore;
+        // LevelManager.OnUpdateScore -= UpdateScore;
 
     }
 
@@ -136,8 +160,9 @@ public class GameUiController : MonoBehaviour
 
     // }
 
-    private void HitRespond(State i)
+    private void HitRespond(int state)
     {
+        State i = (State)state;
         if (i == State.BAD)return;
 
         var s = Instantiate(ScorePrefab, ScoreParent);

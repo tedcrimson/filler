@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class PrefsManager {
+public static class PrefsManager
+{
 
 
     private const string HIGH_SCORE = "highscore";
     private const string LAST_WORLD = "last_world";
+    private const string LAST_LEVEL = "level_index";
     private const string AUDIO = "audio";
     private const string COIN = "coin";
     private const string QUEST = "quest_";
@@ -54,6 +56,18 @@ public static class PrefsManager {
         set
         {
             PlayerPrefs.SetInt(LAST_WORLD, value);
+        }
+    }
+
+    public static int LastLevel
+    {
+        get
+        {
+            return PlayerPrefs.GetInt(LAST_LEVEL);
+        }
+        set
+        {
+            PlayerPrefs.SetInt(LAST_LEVEL, value);
         }
     }
 
@@ -204,4 +218,13 @@ public static class PrefsManager {
             PlayerPrefs.SetInt(TUTORIAL, value ? 0 : 1);
         }
     }
+
+#if UNITY_EDITOR
+
+    [UnityEditor.MenuItem("Prefs/Clear")]
+    public static void ClearData()
+    {
+        PlayerPrefs.DeleteAll();
+    }
+#endif
 }

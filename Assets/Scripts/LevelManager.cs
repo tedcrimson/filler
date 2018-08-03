@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public enum State
 {
     BAD = -1, GOOD = 0, PERFECT = 1
@@ -10,23 +11,23 @@ public enum State
 [System.Serializable]
 public class HitPoint
 {
-	public float angle;
-	public GameObject obj;
-	public bool hit;
+    public float angle;
+    public GameObject obj;
+    public bool hit;
     public SpriteMask mask;
-	public HitPoint(GameObject obj, float angle)
-	{
-		this.obj = obj;
-		this.angle = angle;
-		this.hit = false;
+    public HitPoint(GameObject obj, float angle)
+    {
+        this.obj = obj;
+        this.angle = angle;
+        this.hit = false;
         mask = obj.GetComponent<SpriteMask>();
-	}
+    }
 
-	public void Hit()
-	{
-		mask.enabled = false;
-		hit = true;
-	}
+    public void Hit()
+    {
+        mask.enabled = false;
+        hit = true;
+    }
 }
 public class LevelManager : MonoBehaviour
 {
@@ -51,20 +52,23 @@ public class LevelManager : MonoBehaviour
     private int dir;
     private float speed;
 
-    private State state;
+    public static State state;
+    public static State lastState;
 
     private float offset;
     private LevelData lvl;
 
     int score;
+    int combo = 0;
 
-    public int scoreMultiplier=1;
+    public int scoreMultiplier = 1;
 
     public delegate void UpdateData(int data);
     public static event UpdateData OnUpdateScore;
     public static event UpdateData OnCombo;
     public static event UpdateData OnGameOver;
     public static event UpdateData OnChangeLevel;
+    public static event UpdateData OnStateCheck;
 
     public static LevelManager Instance;
 
@@ -74,7 +78,7 @@ public class LevelManager : MonoBehaviour
         Instance = this;
         offset = 0.03f;
         dir = -1;
-        lvl = GameManager.Instance.Data.GetLevelData(Random.Range(0, 15));
+        lvl = GameManager.Instance.Data.GetLevelData(PrefsManager.LastLevel);
         SkinData currentSkin = GameManager.Instance.CurrentSkin;
         targetPrefab = currentSkin.TargetObject;
         MainObject = Instantiate(currentSkin.MainObject);
@@ -82,7 +86,7 @@ public class LevelManager : MonoBehaviour
         spawner.transform.position = new Vector2(0, currentSkin.SpawnerPosY);
         hitObject.position = new Vector2(0, currentSkin.HitPosY);
         Camera.main.backgroundColor = currentSkin.BackgroundColor;
-        if(currentSkin.BackgroundTexture != null)
+        if (currentSkin.BackgroundTexture != null)
             backGroundImage.sprite = currentSkin.BackgroundTexture;
 
         state = State.PERFECT;
@@ -102,7 +106,7 @@ public class LevelManager : MonoBehaviour
 
     void Start()
     {
-       // Debug.Log(PlayerPrefs.GetInt("Highscore"));
+        // Debug.Log(PlayerPrefs.GetInt("Highscore"));
         dir = Random.value > .5f ? 1 : -1;
         if (lvl.canSlowDown)
         {
@@ -132,16 +136,19 @@ public class LevelManager : MonoBehaviour
     {
         MainObject.transform.Rotate(Vector3.forward * dir, speed);
 
+
         // MainObject.transform.Rotate(Vector3.forward, dir * speed);
         float zone = Mathf.Abs(MainObject.transform.eulerAngles.z - pointAngles[currentIndex].angle);
         // Debug.Log(pointAngles[currentIndex].angle + " "  + MainObject.transform.eulerAngles.z + "  " + zone);
         if (zone <= 4)
         {
-            state = State.PERFECT;
+            if (!pointAngles[currentIndex].hit)
+                state = State.PERFECT;
         }
         else if (zone <= 11)
         {
-            state = State.GOOD;
+            if (!pointAngles[currentIndex].hit)
+                state = State.GOOD;
         }
         else
         {
@@ -185,38 +192,58 @@ public class LevelManager : MonoBehaviour
     public bool CheckAllHit()
     {
         bool allhit = pointAngles.TrueForAll(x => x.hit);
+        Debug.LogError("Current Was " + currentIndex);
+
         do
         {
-            currentIndex = currentIndex - dir;
-            if (currentIndex == pointAngles.Count)
-                currentIndex = 0;
-            if (currentIndex < 0)
-                currentIndex = pointAngles.Count - 1;
+            MoveOnNext();
         }
         while (!allhit && pointAngles[currentIndex].hit);
-        // Debug.LogError(currentIndex);
+        Debug.LogError("Next is " + currentIndex);
+
         return allhit;
+    }
+
+    void MoveOnNext()
+    {
+        currentIndex = currentIndex - dir;
+        if (currentIndex == pointAngles.Count)
+            currentIndex = 0;
+        if (currentIndex < 0)
+            currentIndex = pointAngles.Count - 1;
     }
 
 
     void HitDetect(ShootController s)
     {
-        s.Animate(state);
-        if (state != State.BAD)
+        if (state != State.BAD && !pointAngles[currentIndex].hit)
         {
+            if (lastState == State.PERFECT && state == State.PERFECT)
+            {
+                combo++;
+                OnCombo(combo);
+            }
+            else
+                combo = 0;
+
+            lastState = state;
             // Debug.Log("Hit" + state);
-            // Debug.LogError(currentIndex);
             s.FixPosition(pointAngles[currentIndex].obj);
             pointAngles[currentIndex].Hit();
-            // CheckAllHit();
+            // MoveOnNext();            
+            // state = State.BAD;
         }
         else
         {
+            state = State.BAD;
             s.GravityOff();
             GameOver();
         }
-        score += ((int)state+1)*scoreMultiplier;
-        Audio.PlayHitSound(state);
+
+        score += ((int)state + 1) * scoreMultiplier;
+        OnUpdateScore(score);
+        Debug.LogError(state);
+        OnStateCheck((int)state);
 
         UpdateHighscore(score);
     }
@@ -230,7 +257,7 @@ public class LevelManager : MonoBehaviour
     public void GameOver()
     {
         // UnityEngine.SceneManagement.SceneManager.LoadScene(0);
-        Audio.AS.PlayOneShot(Audio.LoseSound);
+        OnGameOver(score);
     }
 
     public AudioClip GetLevelAudio()
@@ -240,13 +267,18 @@ public class LevelManager : MonoBehaviour
 
     public void Win()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+        MainObject.GetComponent<Animator>().SetTrigger("Hide");
+
+        // UnityEngine.SceneManagement.SceneManager.LoadScene(1);
+        // PrefsManager.LastLevel ++;
+        OnChangeLevel(++PrefsManager.LastLevel);
+
         Audio.AS.PlayOneShot(Audio.WinSound);
     }
 
     public void UpdateHighscore(int score)
     {
-        if(PlayerPrefs.GetInt("Highscore")<score)
-            PlayerPrefs.SetInt("Highscore",score);
+        if (PlayerPrefs.GetInt("Highscore") < score)
+            PlayerPrefs.SetInt("Highscore", score);
     }
 }
