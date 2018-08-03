@@ -3,7 +3,7 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
@@ -17,5 +17,6 @@ MonoBehaviour:
   HitObject: {fileID: 114866950162286826, guid: 84d476dcb91cb824a9a9fe698846ab37,
     type: 2}
   BackgroundColor: {r: 0, g: 0, b: 0, a: 0}
+  BackgroundTexture: {fileID: 0}
   SpawnerPosY: 1.8
   HitPosY: 1.58
