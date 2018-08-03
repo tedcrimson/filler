@@ -33,7 +33,6 @@ public class LevelManager : MonoBehaviour
     public PlayerController player;
 
     public AudioController Audio;
-    public UiController UI;
     public SpriteRenderer backGroundImage;
     [Range(0f, 1f)]
     public float levelCoefficient;
@@ -61,8 +60,18 @@ public class LevelManager : MonoBehaviour
 
     public int scoreMultiplier=1;
 
+    public delegate void UpdateData(int data);
+    public static event UpdateData OnUpdateScore;
+    public static event UpdateData OnCombo;
+    public static event UpdateData OnGameOver;
+    public static event UpdateData OnChangeLevel;
+
+    public static LevelManager Instance;
+
     private void Awake()
     {
+
+        Instance = this;
         offset = 0.03f;
         dir = -1;
         lvl = GameManager.Instance.Data.GetLevelData(Random.Range(0, 15));
@@ -208,8 +217,7 @@ public class LevelManager : MonoBehaviour
         }
         score += ((int)state+1)*scoreMultiplier;
         Audio.PlayHitSound(state);
-        UI.UpdateHitInfo(state);
-        UI.UpdateScore(score);
+
         UpdateHighscore(score);
     }
     public void RandomGenerator()
@@ -223,6 +231,11 @@ public class LevelManager : MonoBehaviour
     {
         // UnityEngine.SceneManagement.SceneManager.LoadScene(0);
         Audio.AS.PlayOneShot(Audio.LoseSound);
+    }
+
+    public AudioClip GetLevelAudio()
+    {
+        return null;
     }
 
     public void Win()
