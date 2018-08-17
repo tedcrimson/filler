@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 222324245966486136}
   - component: {fileID: 114164269497574494}
   - component: {fileID: 111721221760287966}
+  - component: {fileID: 114961673339606156}
   m_Layer: 5
   m_Name: ChildComboText
   m_TagString: Untagged
@@ -39,6 +40,8 @@ Animation:
   serializedVersion: 3
   m_Animation: {fileID: 7400000, guid: 4dc965c871ca522428d4e1297d6ce60d, type: 2}
   m_Animations:
+  - {fileID: 0}
+  - {fileID: 7400000, guid: ef3a20f2dfe12404ebe06fe6beebd6a9, type: 2}
   - {fileID: 7400000, guid: 4dc965c871ca522428d4e1297d6ce60d, type: 2}
   m_WrapMode: 0
   m_PlayAutomatically: 1
@@ -64,7 +67,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: 17838751d2b723c468fb528157fd78a0, type: 3}
     m_FontSize: 98
     m_FontStyle: 0
     m_BestFit: 0
@@ -77,6 +80,20 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: x5
+--- !u!114 &114961673339606156
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1903020028790196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -900027084, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 0.5, y: -0.5}
+  m_UseGraphicAlpha: 1
 --- !u!222 &222324245966486136
 CanvasRenderer:
   m_ObjectHideFlags: 1

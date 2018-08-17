@@ -11,12 +11,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 585d39933941be642827aa7c344705f8, type: 3}
   m_Name: Pizza
   m_EditorClassIdentifier: 
-  MainObject: {fileID: 1554127119025210, guid: efa6b25d17670fc41a4f35487fe2d368, type: 2}
+  ShopIcon: {fileID: 21300000, guid: 2fc5f7ed5a5ac3347b7ef6cfe02350f3, type: 3}
+  Unlocked: 0
+  UnlockCoin: 20
+  SkinSprite: {fileID: 21300000, guid: 3dd50dcabfde8e24fbd92ce3a3991cc1, type: 3}
+  MainObject: {fileID: 1679694708817164, guid: efa6b25d17670fc41a4f35487fe2d368, type: 2}
+  RareValue: -0.1
+  RareObject: {fileID: 0}
   TargetObject: {fileID: 1210947180191996, guid: ae847979e0ddee2428f19c9291841416,
     type: 2}
   HitObject: {fileID: 114866950162286826, guid: 84d476dcb91cb824a9a9fe698846ab37,
     type: 2}
   BackgroundColor: {r: 0, g: 0, b: 0, a: 0}
-  BackgroundTexture: {fileID: 0}
-  SpawnerPosY: 1.8
+  SpawnerPosY: 1.85
   HitPosY: 1.58
+  PerfectZone: 12
+  GoodZone: 4
+  RandomGradient:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 1, g: 1, b: 1, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2

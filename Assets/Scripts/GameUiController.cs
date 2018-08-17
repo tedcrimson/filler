@@ -12,12 +12,30 @@ public class GameUiController : MonoBehaviour
     [Header("Panels")]
     public Transform ScoreParent;
     public Transform ComboParent;
+    public Transform CoinParent;
     // public GameObject GameWinPanel;
-    public GameObject GameOverPanel;
+    public CanvasGroup GameOverPanel;
     public CanvasGroup FadePanel;
+    public CanvasGroup LevelPanel;
     public Text GameOverText;
     public Text ScoreText;
+    public Text CoinText;
 
+    [Header("New Skin Suggestion")] // ns = New Skin
+    public GameObject ns_Panel;
+    public Image ns_Background;
+    public Text ns_Name;
+    public GameObject ns_PricePanel;
+    public Text ns_Price;
+    public Button ns_BuyButton;
+    public Button ns_UseButton;
+    public GameObject ns_EnjoyText;
+    [Header("Unlocked Skin Suggestion")] // us = Unlocked Skin
+    public GameObject us_Panel;
+    public Image us_Background;
+    public Text us_Name;
+    public Button us_UseButton;
+    public GameObject us_EnjoyText;
     // public Transform SkinContainer;
     // public GameObject SkinPrefab;
     // public Button SkinsButton;
@@ -30,17 +48,22 @@ public class GameUiController : MonoBehaviour
 
     public GameObject ComboPrefab;
     public GameObject ScorePrefab;
+    public GameObject CoinPrefab;
 
     
     #endregion
+
+    private bool levelUpdated = false;
 
 
 
 
     // Use this for initialization
-    void Start()
+    IEnumerator Start()
     {
 
+        LevelManager.OnGetCoin += UpdateCoin;
+        LevelManager.OnAddCoin += AddCoin;
         LevelManager.OnUpdateScore += UpdateScore;
         // PlayerController.OnUpdateProgress += UpdateProgress;
         // PlayerController.OnClick += ClickRespond;
@@ -57,7 +80,16 @@ public class GameUiController : MonoBehaviour
         {
             UnityEngine.SceneManagement.SceneManager.LoadScene(1);
         });
-        StartCoroutine(FadeIn());
+        LevelPanel.GetComponentInChildren<Text>().text = "Level " + (PrefsManager.LastLevel+1);
+
+        yield return StartCoroutine(FadeIn(FadePanel, 2));
+        LevelPanel.GetComponentInChildren<Animation>().Play();
+        // yield return StartCoroutine(FadeOut(LevelPanel, 2));
+        // yield return StartCoroutine(FadeIn(LevelPanel, 2));
+        yield return new WaitForSeconds(1f);
+        LevelManager.Instance.Enable();// = true;
+
+
 
         // RateButton.onClick.AddListener(()=>Application.OpenURL("https://play.google.com/store/apps/details?id=com.nefster.meatbusters"));
 
@@ -75,28 +107,36 @@ public class GameUiController : MonoBehaviour
 
     IEnumerator Reload()//fade out
     {
-        yield return StartCoroutine(FadeOut());
+        yield return StartCoroutine(FadeOut(FadePanel));
         UnityEngine.SceneManagement.SceneManager.LoadScene(1);
     }
 
-    IEnumerator FadeOut()
+    IEnumerator FadeOut(CanvasGroup panel, float speed = 1, float preWait = 0, float postWait = 0)
     {
-        while(FadePanel.alpha < 0.9)
+        panel.alpha = 0f;
+        panel.interactable = false;
+
+        if(preWait > 0)
+            yield return new WaitForSeconds(preWait);
+        while(panel.alpha < 0.9)
         {
-            FadePanel.alpha += Time.deltaTime;
+            panel.alpha += Time.deltaTime * speed;
             yield return null;
         }
-        FadePanel.alpha = 1f;
+        panel.alpha = 1f;
+        if(postWait > 0)
+            yield return new WaitForSeconds(postWait);
+        panel.interactable = true;
     }
-    IEnumerator FadeIn()
+    IEnumerator FadeIn(CanvasGroup panel, float speed = 1)
     {
-        FadePanel.alpha = 1f;
-        while(FadePanel.alpha > 0.1f)
+        panel.alpha = 1f;
+        while(panel.alpha > 0.1f)
         {
-            FadePanel.alpha -= Time.deltaTime ;
+            panel.alpha -= Time.deltaTime * speed;
             yield return null;
         }
-        FadePanel.alpha = 0f;
+        panel.alpha = 0f;
     }
 
 
@@ -111,6 +151,8 @@ public class GameUiController : MonoBehaviour
     /// </summary>
     void OnDestroy()
     {
+        LevelManager.OnGetCoin -= UpdateCoin;
+        LevelManager.OnAddCoin -= AddCoin;
         LevelManager.OnChangeLevel -= ChangeLevel;
         LevelManager.OnUpdateScore -= UpdateScore;
         LevelManager.OnStateCheck -= HitRespond;
@@ -123,9 +165,23 @@ public class GameUiController : MonoBehaviour
 
     }
 
+    private void AddCoin(int addCoin)
+    {
+        var coinClone =Instantiate(CoinPrefab, CoinParent);
+        coinClone.GetComponent<Text>().text = "+" + addCoin;
+        Destroy(coinClone, 1f);
+        
+    }
+
+    private void UpdateCoin(int TotalCoin)
+    {
+        CoinText.text = TotalCoin + "";
+    }
+
     private void ChangeLevel(int level)
     {
         StartCoroutine(Reload());
+        levelUpdated = true;
         // int curLev = GameManager.Instance.CurrentLevelIndex + 1;
     }
 
@@ -147,7 +203,16 @@ public class GameUiController : MonoBehaviour
     {
         FadePanel.interactable=false;
         FadePanel.blocksRaycasts=false;
-        GameOverPanel.SetActive(true);
+        ScoreText.gameObject.SetActive(false);
+        GameOverPanel.gameObject.SetActive(true);
+        StartCoroutine(FadeOut(GameOverPanel, 3, .5f));
+        GameOverText.text = "Level " + (PrefsManager.LastLevel+1);
+
+        if(levelUpdated && (PrefsManager.LastLevel + 1)%5 >= 0)
+        {
+            UnlockSkinSuggestion();
+        }else
+            NewSkinSuggestion();
         // LevelManager.OnUpdateScore -= UpdateScore;
 
     }
@@ -176,6 +241,57 @@ public class GameUiController : MonoBehaviour
         var c = Instantiate(ComboPrefab, ComboParent);
         c.GetComponent<Text>().text = "x" + combo;
         Destroy(c, 2);
+    }
+
+    private void NewSkinSuggestion()
+    {
+        ShopItem shopItem = GameManager.Instance.skins.Find(x=>!x.Unlocked && x.CanUnlock(GameManager.Instance.GetCoins));
+        if(shopItem == null) return;
+        ns_Panel.SetActive(true);
+
+        ns_Name.text = shopItem.name;
+        ns_Background.sprite = shopItem.ShopIcon;
+        ns_Price.text = shopItem.UnlockCoin +"";
+        ns_BuyButton.onClick.AddListener(()=>{
+            GameManager.Instance.UpdateCoin(-shopItem.UnlockCoin);
+            ns_PricePanel.SetActive(false);
+            ns_UseButton.gameObject.SetActive(true);
+            shopItem.Unlocked = true;
+        });
+
+        ns_UseButton.onClick.AddListener(()=>{
+            ns_UseButton.gameObject.SetActive(false);
+            ns_EnjoyText.SetActive(true);
+
+            if(shopItem is SkinData)
+				GameManager.Instance.CurrentSkin = (SkinData)shopItem;
+			else if(shopItem is BackgroundSkin)
+				GameManager.Instance.CurrentBackgroundSkin = (BackgroundSkin)shopItem;
+			
+        });
+
+    }
+
+
+    private void UnlockSkinSuggestion()
+    {
+        ShopItem shopItem = GameManager.Instance.skins.Find(x=>!x.Unlocked);
+        if(shopItem == null) return;
+        us_Panel.SetActive(true);
+        us_Name.text = shopItem.name;
+        us_Background.sprite = shopItem.ShopIcon;
+
+        us_UseButton.onClick.AddListener(()=>{
+            us_UseButton.gameObject.SetActive(false);
+            us_EnjoyText.SetActive(true);
+
+            if(shopItem is SkinData)
+				GameManager.Instance.CurrentSkin = (SkinData)shopItem;
+			else if(shopItem is BackgroundSkin)
+				GameManager.Instance.CurrentBackgroundSkin = (BackgroundSkin)shopItem;
+			
+        });
+
     }
 
 

@@ -6,6 +6,7 @@ public static class PrefsManager
 {
 
 
+    private const string CURRENT_SCORE = "current_score";
     private const string HIGH_SCORE = "highscore";
     private const string LAST_WORLD = "last_world";
     private const string LAST_LEVEL = "level_index";
@@ -22,6 +23,32 @@ public static class PrefsManager
     private const string IS_REVIVED = "isRevived";
     private const string TUTORIAL = "tutorial";
     private const string DEATH_COUNTER = "deathcounter";
+    private const string MAIN_SKIN_INDEX = "main_skin_index";
+    private const string BACKGROUND_SKIN_INDEX = "background_skin_index";
+
+    public static int MainSkinIndex
+    {
+        get
+        {
+            return PlayerPrefs.GetInt(MAIN_SKIN_INDEX);
+        }
+        set
+        {
+            PlayerPrefs.SetInt(MAIN_SKIN_INDEX, value);
+        }
+    }
+    
+    public static int BackgroundSkinIndex
+    {
+        get
+        {
+            return PlayerPrefs.GetInt(BACKGROUND_SKIN_INDEX);
+        }
+        set
+        {
+            PlayerPrefs.SetInt(BACKGROUND_SKIN_INDEX, value);
+        }
+    }
 
     public static int DeathCounter
     {
@@ -34,6 +61,19 @@ public static class PrefsManager
             PlayerPrefs.SetInt(DEATH_COUNTER, value);
         }
     }
+
+    public static int CurrentScore
+    {
+        get
+        {
+            return PlayerPrefs.GetInt(CURRENT_SCORE);
+        }
+        set
+        {
+            PlayerPrefs.SetInt(CURRENT_SCORE, value);
+        }
+    }
+
 
     public static int HighScore
     {

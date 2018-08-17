@@ -6,13 +6,16 @@ using UnityEngine;
 public class ScriptableLevels : ScriptableObject
 {
     public List<Difficulty> difficulties;
-	public LevelData GetLevelData(int lvl)
+	public LevelData GetLevelData(int lvl, ref float coef)
 	{
 		Difficulty current = difficulties[0];
 		foreach(Difficulty d in difficulties)
-			if (lvl < d.lvlValue)
+			if (lvl >= d.lvlValue){
 				current = d;
-		return current.levelData[Random.Range(0, current.levelData.Count - 1)];
+			}
+		coef = current.sliceCoeficient;
+		Debug.Log(current.name);
+		return current.levelData[Random.Range(0, current.levelData.Count)];
 	}
 }
 
@@ -21,6 +24,8 @@ public class Difficulty
 {
 	public string name;
 	public int lvlValue;
+	[Range(0f, 1f)]
+	public float sliceCoeficient;
     public List<LevelData> levelData;
 }
 

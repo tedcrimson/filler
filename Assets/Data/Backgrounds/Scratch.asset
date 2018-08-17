@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5305d5792fa25b849aed28a8ba87d6ef, type: 3}
+  m_Name: Scratch
+  m_EditorClassIdentifier: 
+  ShopIcon: {fileID: 21300000, guid: a7fd8b05135bea24e919a293f7cb53f7, type: 3}
+  Unlocked: 1
+  UnlockCoin: 2
+  BackgroundTexture: {fileID: 21300000, guid: 79019e8c9e3250943aca7c542e28dd92, type: 3}
